@@ -136,7 +136,7 @@ h1 span{color:var(--gold)}
       data=d;var ids=d.friends.map(function(c){return c.id});
       if(seen){var fresh=d.friends.filter(function(c){return seen.indexOf(c.id)<0}).sort(function(a,b){return new Date(a.at)-new Date(b.at)});fresh.forEach(function(c,i){setTimeout(function(){pop(c)},i*61000)})}
       seen=ids;render()}).catch(function(){})}
-  load();setInterval(load,60000);
+  load();setInterval(load,30000);
   if(location.hash==='#test')setTimeout(function(){if(data)pop(data.friends[0])},1500);
 })();
 </script>
