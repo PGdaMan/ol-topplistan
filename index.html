@@ -117,8 +117,9 @@ h1 span{color:var(--gold)}
   }
   // Ljud: ett "pop" och kolsyra som pyser. Webbläsare kräver ett klick innan ljud får spelas.
   var actx=null,soundOn=false;
-  $('sound').onclick=function(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();actx.resume();soundOn=true;this.classList.add('on');this.textContent='🔊 Ljud på';beer()}catch(e){}};
-  function beer(){if(!soundOn||!actx)return;var a=actx,t=a.currentTime+.05,o=a.createOscillator(),g=a.createGain();
+  $('sound').onclick=function(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();actx.resume();soundOn=true;this.classList.add('on');this.textContent='🔊 Ljud på';if(beerBuf)beer();else loadBeer()}catch(e){}};
+  var beerBuf=null;function loadBeer(){if(!actx||beerBuf)return;fetch('ol.mp3').then(function(r){return r.arrayBuffer()}).then(function(b){return actx.decodeAudioData(b)}).then(function(buf){beerBuf=buf;beer()}).catch(function(){})}
+  function beer(){if(!soundOn||!actx)return;if(beerBuf){var s=actx.createBufferSource();s.buffer=beerBuf;s.connect(actx.destination);s.start();return}var a=actx,t=a.currentTime+.05,o=a.createOscillator(),g=a.createGain();
     o.frequency.setValueAtTime(900,t);o.frequency.exponentialRampToValueAtTime(120,t+.07);g.gain.setValueAtTime(1e-4,t);g.gain.exponentialRampToValueAtTime(.7,t+.005);g.gain.exponentialRampToValueAtTime(1e-4,t+.09);o.connect(g).connect(a.destination);o.start(t);o.stop(t+.1);
     var len=a.sampleRate*1.6,buf=a.createBuffer(1,len,a.sampleRate),d=buf.getChannelData(0);for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*(Math.random()<.02?1:.35);
     var n=a.createBufferSource();n.buffer=buf;var f=a.createBiquadFilter();f.type='bandpass';f.frequency.setValueAtTime(5200,t);f.frequency.exponentialRampToValueAtTime(2600,t+1.5);
